@@ -1,88 +1,89 @@
 import type { Product } from "../types/products"
 
-// Define a type for product input (without id)
-type ProductInput = Omit<Product, "id">
-
-// Validate product image URL format
-const isValidImageUrl = (url: string): boolean => {
-  return url.startsWith('/') && (url.endsWith('.webp') || url.endsWith('.jpeg') || 
-         url.endsWith('.jpg') || url.endsWith('.avif'))
-}
-
-// Immutable initial products data
-const INITIAL_PRODUCTS: Product[] = [
+// In-memory storage for products
+const products: Product[] = [
   {
     id: 1,
     name: "Diamond Solitaire Ring",
     price: 2499,
-    imageUrl: "/diamond-solitier-ring.webp",
+    imageUrl: "/diamond-solitier-ring.webp?height=400&width=400",
     category: "jewelry",
     description: "Exquisite 1-carat diamond solitaire ring in 18k white gold setting.",
   },
-  // ... other products (remove query parameters from image URLs)
-] as const
+  {
+    id: 2,
+    name: "Pearl Drop Earrings",
+    price: 899,
+    imageUrl: "/pearl-earing.jpeg?height=400&width=400",
+    category: "jewelry",
+    description: "Elegant freshwater pearl drop earrings with gold accents.",
+  },
+  {
+    id: 3,
+    name: "Luxury Swiss Watch",
+    price: 3299,
+    imageUrl: "/swiss-watch.jpeg?height=400&width=400",
+    category: "watches",
+    description: "Premium Swiss-made automatic watch with leather strap.",
+  },
+  {
+    id: 4,
+    name: "Designer Silk Scarf",
+    price: 299,
+    imageUrl: "/silk-scarf.avif?height=400&width=400",
+    category: "fashion",
+    description: "Luxurious silk scarf with hand-printed artistic design.",
+  },
+  {
+    id: 5,
+    name: "Gold Tennis Bracelet",
+    price: 1899,
+    imageUrl: "/gold-brecelet.webp?height=400&width=400",
+    category: "jewelry",
+    description: "Classic tennis bracelet featuring brilliant-cut diamonds in 14k gold.",
+  },
+  {
+    id: 6,
+    name: "Vintage Emerald Necklace",
+    price: 4299,
+    imageUrl: "/necklace-emerald.jpg?height=400&width=400",
+    category: "jewelry",
+    description: "Stunning vintage-inspired emerald necklace with intricate gold work.",
+  },
+  {
+    id: 7,
+    name: "Premium Leather Handbag",
+    price: 799,
+    imageUrl: "/handbag.avif?height=400&width=400",
+    category: "fashion",
+    description: "Handcrafted Italian leather handbag with gold hardware.",
+  },
+]
 
-// Create a copy of initial products that we can modify
-let products: Product[] = [...INITIAL_PRODUCTS]
-let nextId = products.length > 0 
-  ? Math.max(...products.map(p => p.id)) + 1 
-  : 1
+let nextId = 9
 
 export function getAllProducts(): Product[] {
-  return [...products] // Return a copy to prevent mutation
+  return products
 }
 
 export function getProductById(id: number): Product | undefined {
-  if (typeof id !== 'number' || id <= 0) {
-    throw new Error('Invalid product ID')
-  }
   return products.find((product) => product.id === id)
 }
 
-export function addProduct(productData: ProductInput): Product {
-  // Validate input
-  if (!productData.name || productData.name.trim().length === 0) {
-    throw new Error('Product name is required')
-  }
-  
-  if (typeof productData.price !== 'number' || productData.price <= 0) {
-    throw new Error('Valid price is required')
-  }
-  
-  if (!isValidImageUrl(productData.imageUrl)) {
-    throw new Error('Valid image URL is required')
-  }
-  
-  if (!productData.category) {
-    throw new Error('Category is required')
-  }
-
+export function addProduct(productData: Omit<Product, "id">): Product {
   const newProduct: Product = {
     id: nextId++,
     ...productData,
-    name: productData.name.trim(),
   }
-  
   products.push(newProduct)
-  return { ...newProduct } // Return a copy
+  return newProduct
 }
 
 export function deleteProduct(id: number): boolean {
-  if (typeof id !== 'number' || id <= 0) {
-    return false 
-  }
-
   const index = products.findIndex((product) => product.id === id)
-  if (index === -1) return false
-  
-  products = products.filter(product => product.id !== id)
-  return true
-}
-
-// Utility function for testing/reset
-export function _resetProducts() {
-  products = [...INITIAL_PRODUCTS]
-  nextId = products.length > 0 
-    ? Math.max(...products.map(p => p.id)) + 1 
-    : 1
+  if (index !== -1) {
+    products.splice(index, 1)
+    return true
+  }
+  return false
 }
