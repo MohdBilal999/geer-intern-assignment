@@ -8,21 +8,28 @@ import { ArrowLeft, Trash2 } from "lucide-react"
 import type { Product } from "../../../types/products"
 
 interface ProductDetailPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState(false)
+  const [productId, setProductId] = useState<string>("")
   const router = useRouter()
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const initializeAndFetch = async () => {
       try {
-        const response = await fetch(`/api/products/${params.id}`)
+        // Await params to get the id
+        const resolvedParams = await params
+        const id = resolvedParams.id
+        setProductId(id)
+
+        // Fetch the product
+        const response = await fetch(`/api/products/${id}`)
         if (response.ok) {
           const data = await response.json()
           setProduct(data)
@@ -37,8 +44,8 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
       }
     }
 
-    fetchProduct()
-  }, [params.id])
+    initializeAndFetch()
+  }, [params])
 
   const handleDelete = async () => {
     if (!product || !confirm("Are you sure you want to delete this product?")) {
@@ -47,7 +54,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
 
     setDeleting(true)
     try {
-      const response = await fetch(`/api/${product.id}`, {
+      const response = await fetch(`/api/products/${product.id}`, {
         method: "DELETE",
       })
 
