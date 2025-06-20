@@ -1,13 +1,14 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { getProductById, deleteProduct } from "../../../../lib/products" // adjust path as needed
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = parseInt(params.id)
-    const product = await getProductById(id)
+    const { id } = await params
+    const productId = parseInt(id)
+    const product = await getProductById(productId)
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 })
     }
@@ -19,12 +20,13 @@ export async function GET(
 }
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = parseInt(params.id)
-    const success = await deleteProduct(id)
+    const { id } = await params
+    const productId = parseInt(id)
+    const success = await deleteProduct(productId)
     if (!success) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 })
     }
