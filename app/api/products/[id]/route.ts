@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { getProductById, deleteProduct } from "../../../../lib/products"
+import { getProductById, deleteProduct } from "../../../../lib/products" // update if needed
 
 interface Params {
   id: string
@@ -10,15 +10,16 @@ export async function GET(
   { params }: { params: Params }
 ) {
   try {
-    const id = Number.parseInt(params.id)
-    const product = getProductById(id)
+    const id = parseInt(params.id)
+    const product = await getProductById(id) // Make sure it's async
 
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 })
     }
 
     return NextResponse.json(product)
-  } catch {
+  } catch (err) {
+    console.error("GET Error:", err)
     return NextResponse.json({ error: "Failed to fetch product" }, { status: 500 })
   }
 }
@@ -28,15 +29,16 @@ export async function DELETE(
   { params }: { params: Params }
 ) {
   try {
-    const id = Number.parseInt(params.id)
-    const success = deleteProduct(id)
+    const id = parseInt(params.id)
+    const success = await deleteProduct(id) // Make sure it's async
 
     if (!success) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 })
     }
 
     return NextResponse.json({ message: "Product deleted successfully" })
-  } catch {
+  } catch (err) {
+    console.error("DELETE Error:", err)
     return NextResponse.json({ error: "Failed to delete product" }, { status: 500 })
   }
 }
