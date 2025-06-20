@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { type NextRequest, NextResponse } from "next/server"
 import { getProductById, deleteProduct } from "../../../../lib/products"
 
@@ -12,7 +11,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     return NextResponse.json(product)
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch product" }, { status: 500 })
   }
 }
@@ -27,7 +26,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     }
 
     return NextResponse.json({ message: "Product deleted successfully" })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to delete product" }, { status: 500 })
   }
 }
