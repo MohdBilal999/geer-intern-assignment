@@ -1,7 +1,14 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import { getProductById, deleteProduct } from "../../../../lib/products"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+interface Params {
+  id: string
+}
+
+export async function GET(
+  request: Request,
+  { params }: { params: Params }
+) {
   try {
     const id = Number.parseInt(params.id)
     const product = getProductById(id)
@@ -16,7 +23,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: Params }
+) {
   try {
     const id = Number.parseInt(params.id)
     const success = deleteProduct(id)
