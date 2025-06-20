@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server"
-import { getProductById, deleteProduct } from "../../../../lib/products" // adjust path as needed
+import { NextRequest, NextResponse } from "next/server"
+import { getProductById, deleteProduct } from "../../../../lib/products" // adjust path if needed
 
 export async function GET(
-  request: Request,
-  context: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: { id: string } }
 ) {
   try {
-    const id = parseInt(context.params.id)
+    const id = parseInt(params.id)
     const product = await getProductById(id)
 
     if (!product) {
@@ -21,11 +21,11 @@ export async function GET(
 }
 
 export async function DELETE(
-  request: Request,
-  context: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: { id: string } }
 ) {
   try {
-    const id = parseInt(context.params.id)
+    const id = parseInt(params.id)
     const success = await deleteProduct(id)
 
     if (!success) {
