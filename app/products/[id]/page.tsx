@@ -17,7 +17,6 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState(false)
-  const [productId, setProductId] = useState<string>("")
   const router = useRouter()
 
   useEffect(() => {
@@ -26,7 +25,6 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
         // Await params to get the id
         const resolvedParams = await params
         const id = resolvedParams.id
-        setProductId(id)
 
         // Fetch the product
         const response = await fetch(`/api/products/${id}`)
